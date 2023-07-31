@@ -1,8 +1,11 @@
+import userService from "../service/userService";
+
 const handleHomeController = (req, res) => {
   return res.render("home.ejs");
 };
 
 const handleUserController = (req, res) => {
+  let userList = userService.getUserList();
   return res.render("user.ejs");
 };
 
@@ -11,7 +14,8 @@ const handleCreateUserController = (req, res) => {
   let password = req.body.password;
   let userName = req.body.username;
 
-  console.log("check", req.body);
+  userService.createNewUser(email, userName, password);
+
   return res.send("create user");
 };
 

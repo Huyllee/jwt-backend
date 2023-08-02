@@ -1,14 +1,8 @@
 import bcrypt from "bcryptjs";
 import mysql from "mysql2";
+import db from "../models";
 
 // create the connection to database
-const connection = mysql.createConnection({
-  host: "localhost",
-  user: "huylee",
-  password: "123456",
-  database: "jwt",
-});
-
 const salt = bcrypt.genSaltSync(10);
 
 const hashPassword = (password) => {
@@ -16,40 +10,34 @@ const hashPassword = (password) => {
   return hashPassword;
 };
 
-const createNewUser = (email, userName, password) => {
+const createNewUser = async(email, userName, password) => {
   let hashPass = hashPassword(password);
 
-  connection.query(
-    `INSERT INTO users (userName, email, password)
-  VALUES (?, ?, ?)`,
-    [userName, email, hashPass],
-    function (err, results, fields) {
-      if (err) {
-        console.log(err);
-      } else {
-        console.log(results);
-      }
-    }
-  );
+  try{
+    await db.User.create({
+      userName: userName,
+      email: email,
+      password: hashPass
+    })
+  }catch(err){
+    console.log(err);
+  }
 };
 
 const getUserList = async () => {
   let users = [];
-  //   return connection.query(
-  //     `SELECT * FROM users`,
-  //     function (err, results, fields) {
-  //       if (err) {
-  //         console.log(err);
-  //         return users;
-  //       } else {
-  //         users = results;
-  //         console.log(results);
-  //       }
-  //     }
-  //   );
+  users = await db.User.findAll();
+  return users;
 };
+
+const deleteUser =async (userId)=>{
+  await db.User.destroy({
+    where:{id:userId}
+  })
+}
 
 module.exports = {
   createNewUser,
   getUserList,
+  deleteUser
 };

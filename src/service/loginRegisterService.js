@@ -65,6 +65,18 @@ const registerNewUser = async (dataUser) => {
   }
 };
 
+const loginUser = async (dataUser) => {
+  try {
+  } catch (err) {
+    console.log(err);
+    return {
+      EM: "Error from service...",
+      EC: -2,
+    };
+  }
+};
+
 module.exports = {
   registerNewUser,
+  loginUser,
 };

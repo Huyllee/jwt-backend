@@ -19,11 +19,11 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 connection();
 
-createJWT();
-let data = verifyToken(
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiaHV5bGVlIiwiYWdlIjoiMjIiLCJpYXQiOjE2OTExNDUzNDd9.OoKzvR9CC8U3cl86awQ4na7LX03qS3JqBEqM45cvN-0"
-);
-console.log(data);
+// createJWT();
+// let data = verifyToken(
+//   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiaHV5bGVlIiwiYWdlIjoiMjIiLCJpYXQiOjE2OTExNDUzNDd9.OoKzvR9CC8U3cl86awQ4na7LX03qS3JqBEqM45cvN-0"
+// );
+// console.log(data);
 
 conFigViewEngine(app);
 initWebRoutes(app);

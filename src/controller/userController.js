@@ -60,7 +60,13 @@ const handlePutUser = async (req, res) => {
 
 const handleDeleteUser = async (req, res) => {
   try {
-    let users = await userApiService.handleGetUsers();
+    let userId = req.body.userId;
+    let user = await userApiService.deleteUser(userId);
+    return res.status(200).json({
+      EM: user.EM,
+      EC: user.EC,
+      DT: user.DT,
+    });
   } catch (e) {
     console.log(e);
     return res.status(500).json({

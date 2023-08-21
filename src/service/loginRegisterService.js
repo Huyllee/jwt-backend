@@ -111,4 +111,8 @@ const loginUser = async (dataUser) => {
 module.exports = {
   registerNewUser,
   loginUser,
+  hashPassword,
+  checkEmail,
+  checkPhone,
+  checkPassword,
 };

@@ -1,6 +1,8 @@
 import jwt from "jsonwebtoken";
 require("dotenv").config();
 
+const nonSecurePaths = ["/register", "/login"];
+
 const createJWT = (payload) => {
   let key = process.env.JWT_SECRET;
   let token = null;
@@ -25,6 +27,8 @@ const verifyToken = (token) => {
 };
 
 const checkUserJWT = (req, res, next) => {
+  if (nonSecurePaths.includes(req.path)) return next();
+
   let cookies = req.cookies;
   if (cookies && cookies.jwt) {
     let token = cookies.jwt;
@@ -49,6 +53,8 @@ const checkUserJWT = (req, res, next) => {
 };
 
 const checkUserPermission = (req, res, next) => {
+  if (nonSecurePaths.includes(req.path)) return next();
+
   if (req.user) {
     let email = req.user.email;
     let roles = req.user.groupWithRole.Roles;
@@ -56,7 +62,7 @@ const checkUserPermission = (req, res, next) => {
     if (!roles || roles.length === 0) {
       return res.status(403).json({
         EC: -1,
-        EM: `You don't permission to access this resource...`,
+        EM: `You don't have the permission to access this resource...`,
         DT: "",
       });
     }
@@ -66,7 +72,7 @@ const checkUserPermission = (req, res, next) => {
     } else {
       return res.status(403).json({
         EC: -1,
-        EM: `You don't permission to access this resource...`,
+        EM: `You don't have the permission to access this resource...`,
         DT: "",
       });
     }

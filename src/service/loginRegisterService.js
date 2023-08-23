@@ -103,6 +103,8 @@ const loginUser = async (dataUser) => {
           DT: {
             access_token: token,
             groupWithRole,
+            email: user.email,
+            userName: user.userName,
           },
         };
       }

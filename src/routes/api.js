@@ -6,22 +6,12 @@ import { checkUserJWT, checkUserPermission } from "../middleware/jwtAction";
 
 const router = express.Router();
 
-const checkUser = (req, res, next) => {
-  const nonSecurePaths = ["/", "/register", "/login"];
-  if (nonSecurePaths.includes(req.path)) return next();
-
-  //auth user
-  if (user) {
-    next();
-  } else {
-  }
-};
-
 const ApiRoutes = (app) => {
   router.all("*", checkUserJWT, checkUserPermission);
 
   router.post("/register", apiController.handleRegister);
   router.post("/login", apiController.handleLogin);
+  router.get("/account", userController.handleUserAccount);
 
   router.get("/get/users", userController.handleGetUsers);
   router.post("/post/user", userController.handlePostUser);

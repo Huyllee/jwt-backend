@@ -89,9 +89,21 @@ const handleDeleteUser = async (req, res) => {
   }
 };
 
+const handleUserAccount = async (req, res) => {
+  return res.status(200).json({
+    EM: "ok",
+    EC: 0,
+    DT: {
+      ...req.user,
+      access_token: req.token,
+    },
+  });
+};
+
 module.exports = {
   handleGetUsers,
   handlePostUser,
   handlePutUser,
   handleDeleteUser,
+  handleUserAccount,
 };

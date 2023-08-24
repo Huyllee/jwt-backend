@@ -92,6 +92,7 @@ const loginUser = async (dataUser) => {
       let groupWithRole = await getGroupWithRoles(user);
       let payload = {
         email: user.email,
+        userName: user.userName,
         groupWithRole,
         expiresIn: process.env.JWT_EXPIRES_IN,
       };

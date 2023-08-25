@@ -94,7 +94,6 @@ const loginUser = async (dataUser) => {
         email: user.email,
         userName: user.userName,
         groupWithRole,
-        expiresIn: process.env.JWT_EXPIRES_IN,
       };
       let token = createJWT(payload);
       if (isCorrectPassword) {

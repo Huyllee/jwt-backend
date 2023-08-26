@@ -12,12 +12,17 @@ const configCORS = (app) => {
     // Request headers you wish to allow
     res.setHeader(
       "Access-Control-Allow-Headers",
-      "X-Requested-With,content-type"
+      "X-Requested-With, content-type, Authorization"
     );
     // Set to true if you need the website to include cookies in the requests sent
     // to the API (e.g. in case you use sessions)
     res.setHeader("Access-Control-Allow-Credentials", true);
     // Pass to next layer of middleware
+
+    if (req.method === "OPTIONS") {
+      return res.sendStatus(200);
+    }
+
     next();
   });
 };

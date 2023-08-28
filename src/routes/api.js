@@ -11,6 +11,7 @@ const ApiRoutes = (app) => {
 
   router.post("/register", apiController.handleRegister);
   router.post("/login", apiController.handleLogin);
+  router.post("/logout", apiController.handleLogout);
   router.get("/account", userController.handleUserAccount);
 
   router.get("/get/users", userController.handleGetUsers);

@@ -19,6 +19,26 @@ const handleGetRoles = async (req, res) => {
   }
 };
 
+const handleGetRoleByGroup = async (req, res) => {
+  try {
+    let groupId = req.params.groupId;
+    let data = await roleApiService.getRoleByGroup(groupId);
+
+    return res.status(200).json({
+      EM: data.EM,
+      EC: data.EC,
+      DT: data.DT,
+    });
+  } catch (e) {
+    console.log(e);
+    return res.status(500).json({
+      EM: "error from server..",
+      EC: -1,
+      DT: "",
+    });
+  }
+};
+
 const handlePostRole = async (req, res) => {
   try {
     let data = await roleApiService.createNewRole(req.body);
@@ -70,6 +90,7 @@ const handleDeleteRole = async (req, res) => {
 };
 
 module.exports = {
+  handleGetRoleByGroup,
   handleGetRoles,
   handlePostRole,
   handlePutRole,

@@ -22,6 +22,42 @@ const getAllRole = async () => {
   }
 };
 
+const getRoleByGroup = async (id) => {
+  try {
+    if (!id) {
+      return {
+        EM: "Not found any roles",
+        EC: 2,
+        DT: roles,
+      };
+    }
+    let roles = await db.Group.findOne({
+      where: { id: id },
+      attributes: ["id", "name", "description"],
+      include: {
+        model: db.Role,
+        attributes: ["id", "url", "description"],
+        through: { attributes: [] },
+      },
+    });
+
+    if (roles) {
+      return {
+        EM: "Get roles by group success",
+        EC: 0,
+        DT: roles,
+      };
+    }
+  } catch (e) {
+    console.log(e);
+    return {
+      EM: "Get data error",
+      EC: 1,
+      DT: [],
+    };
+  }
+};
+
 const createNewRole = async (roles) => {
   try {
     let currentRoles = await db.Role.findAll({
@@ -85,6 +121,7 @@ const deleteRole = async (id) => {
 };
 
 module.exports = {
+  getRoleByGroup,
   createNewRole,
   getAllRole,
   deleteRole,

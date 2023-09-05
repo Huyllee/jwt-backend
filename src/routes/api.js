@@ -22,7 +22,7 @@ const ApiRoutes = (app) => {
   router.delete("/delete/user", userController.handleDeleteUser);
 
   //roles routes
-  router.get("/get/role", roleController.handleGetRoles);
+  router.get("/get/roles", roleController.handleGetRoles);
   router.post("/post/role", roleController.handlePostRole);
   router.put("/put/role", roleController.handlePutRole);
   router.delete("/delete/role", roleController.handleDeleteRole);

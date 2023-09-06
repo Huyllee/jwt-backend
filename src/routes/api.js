@@ -30,6 +30,7 @@ const ApiRoutes = (app) => {
   router.post("/post/role", roleController.handlePostRole);
   router.put("/put/role", roleController.handlePutRole);
   router.delete("/delete/role", roleController.handleDeleteRole);
+  router.post("/post/role/assign-to-group", roleController.handleAssignToGroup);
 
   //groups routes
   router.get("/get/groups", groupController.handleGetGroups);

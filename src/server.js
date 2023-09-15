@@ -3,9 +3,9 @@ import conFigViewEngine from "./config/viewEngine";
 import initWebRoutes from "./routes/web";
 import ApiRoutes from "./routes/api";
 import bodyParser from "body-parser";
-import connection from "./config/connectDB";
 import configCORS from "./config/cors";
 import cookieParser from "cookie-parser";
+import { configPassport } from "./controller/passportController";
 
 require("dotenv").config();
 
@@ -26,6 +26,8 @@ ApiRoutes(app);
 app.use((req, res) => {
   return res.send("404 Not Found");
 });
+
+configPassport();
 
 app.listen(PORT, () => {
   console.log(`server is running on port: ${PORT}`);

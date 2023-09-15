@@ -1,6 +1,7 @@
 import express from "express";
 import homeController from "../controller/homeController";
 import loginController from "../controller/loginController";
+import passport from "passport";
 
 const router = express.Router();
 
@@ -13,6 +14,13 @@ const initWebRoutes = (app) => {
   router.put("/user/update", homeController.handleUpdateUserController);
 
   router.get("/login", loginController.handleGetLoginPage);
+  router.post(
+    "/login",
+    passport.authenticate("local", {
+      successRedirect: "/",
+      failureRedirect: "/login",
+    })
+  );
 
   return app.use("/", router);
 };

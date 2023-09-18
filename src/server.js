@@ -6,6 +6,7 @@ import bodyParser from "body-parser";
 import configCORS from "./config/cors";
 import cookieParser from "cookie-parser";
 import { configPassport } from "./controller/passportController";
+import configSession from "./config/session";
 
 require("dotenv").config();
 
@@ -18,6 +19,8 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use(cookieParser());
+
+configSession(app);
 
 conFigViewEngine(app);
 initWebRoutes(app);

@@ -30,6 +30,17 @@ const configPassport = () => {
   }
 };
 
+const handleLogout = (req, res) => {
+  // req.logout();
+  // return res.redirect("/login");
+
+  req.session.destroy(function () {
+    req.logout();
+    return res.redirect("/login");
+  });
+};
+
 module.exports = {
   configPassport,
+  handleLogout,
 };

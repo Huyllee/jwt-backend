@@ -107,6 +107,12 @@ const loginUser = async (dataUser) => {
             userName: user.userName,
           },
         };
+      } else {
+        return {
+          EM: "Your email/phone number or password is incorrect",
+          EC: 1,
+          DT: "",
+        };
       }
     }
 

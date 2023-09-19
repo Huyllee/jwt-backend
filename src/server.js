@@ -5,6 +5,7 @@ import ApiRoutes from "./routes/api";
 import bodyParser from "body-parser";
 import configCORS from "./config/cors";
 import cookieParser from "cookie-parser";
+import flash from "connect-flash";
 import { configPassport } from "./controller/passportController";
 import configSession from "./config/session";
 
@@ -19,6 +20,8 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use(cookieParser());
+
+app.use(flash());
 
 configSession(app);
 

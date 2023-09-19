@@ -5,7 +5,12 @@ import loginRegisterService from "../service/loginRegisterService";
 const configPassport = () => {
   try {
     passport.use(
-      new localStrategy(async function verify(username, password, cb) {
+      new localStrategy({ passReqToCallback: true }, async function verify(
+        req,
+        username,
+        password,
+        cb
+      ) {
         const rawData = {
           valueLogin: username,
           password: password,

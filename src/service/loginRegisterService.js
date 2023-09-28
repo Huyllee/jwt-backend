@@ -1,6 +1,7 @@
 import db from "../models/index";
 import bcrypt from "bcryptjs";
 import { Op } from "sequelize";
+import { v4 as uuidv4 } from "uuid";
 import { getGroupWithRoles } from "./JWTService";
 import { createJWT } from "../middleware/jwtAction";
 require("dotenv").config();
@@ -88,23 +89,24 @@ const loginUser = async (dataUser) => {
 
     if (user) {
       let isCorrectPassword = checkPassword(dataUser.password, user.password);
-
-      let groupWithRole = await getGroupWithRoles(user);
-      let payload = {
-        email: user.email,
-        userName: user.userName,
-        groupWithRole,
-      };
-      let token = createJWT(payload);
       if (isCorrectPassword) {
+        const code = uuidv4();
+        // let groupWithRole = await getGroupWithRoles(user);
+        // let payload = {
+        //   email: user.email,
+        //   userName: user.userName,
+        //   groupWithRole,
+        // };
+        // let token = createJWT(payload);
         return {
           EM: "ok",
           EC: 0,
           DT: {
-            access_token: token,
-            groupWithRole,
-            email: user.email,
-            userName: user.userName,
+            // access_token: token,
+            // groupWithRole,
+            // email: user.email,
+            // userName: user.userName,
+            code,
           },
         };
       } else {

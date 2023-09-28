@@ -1,5 +1,8 @@
 const handleGetLoginPage = (req, res) => {
-  return res.render("login.ejs");
+  const { serviceURL } = req.query;
+  return res.render("login.ejs", {
+    redirectURL: serviceURL,
+  });
 };
 
 module.exports = {

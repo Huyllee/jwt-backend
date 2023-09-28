@@ -27,7 +27,10 @@ const initWebRoutes = (app) => {
       }
       req.login(user, function (err) {
         if (err) return next(err);
-        return res.status(200).json(user);
+        // return res.redirect(req.body.serviceURL);
+        return res
+          .status(200)
+          .json({ ...user, redirectURL: req.body.serviceURL });
       });
     })(req, res, next);
   });

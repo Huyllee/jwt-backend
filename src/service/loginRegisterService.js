@@ -91,7 +91,7 @@ const loginUser = async (dataUser) => {
       let isCorrectPassword = checkPassword(dataUser.password, user.password);
       if (isCorrectPassword) {
         const code = uuidv4();
-        // let groupWithRole = await getGroupWithRoles(user);
+        let groupWithRole = await getGroupWithRoles(user);
         // let payload = {
         //   email: user.email,
         //   userName: user.userName,
@@ -103,9 +103,9 @@ const loginUser = async (dataUser) => {
           EC: 0,
           DT: {
             // access_token: token,
-            // groupWithRole,
-            // email: user.email,
-            // userName: user.userName,
+            groupWithRole,
+            email: user.email,
+            userName: user.userName,
             code,
           },
         };
@@ -133,6 +133,24 @@ const loginUser = async (dataUser) => {
   }
 };
 
+const updateUserRefreshToken = async (email, token) => {
+  try {
+    await db.User.update(
+      {
+        refreshToken: token,
+      },
+      { where: { email: email } }
+    );
+  } catch (err) {
+    console.log(err);
+    return {
+      EM: "Error from service...",
+      EC: -2,
+      DT: "",
+    };
+  }
+};
+
 module.exports = {
   registerNewUser,
   loginUser,
@@ -140,4 +158,5 @@ module.exports = {
   checkEmail,
   checkPhone,
   checkPassword,
+  updateUserRefreshToken,
 };

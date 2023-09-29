@@ -36,6 +36,7 @@ const initWebRoutes = (app) => {
   });
 
   router.post("/logout", passportController.handleLogout);
+  router.post("/verify-token", loginController.verifySSOToken);
 
   return app.use("/", router);
 };

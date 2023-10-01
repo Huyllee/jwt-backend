@@ -95,7 +95,7 @@ const handleUserAccount = async (req, res) => {
     EC: 0,
     DT: {
       ...req.user,
-      access_token: req.token,
+      // access_token: req.token,
     },
   });
 };

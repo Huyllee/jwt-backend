@@ -1,3 +1,4 @@
+require("dotenv").config();
 import loginRegisterService from "../service/loginRegisterService";
 
 const handleRegister = async (req, res) => {
@@ -79,7 +80,14 @@ const handleLogin = async (req, res) => {
 
 const handleLogout = async (req, res) => {
   try {
-    res.clearCookie("jwt");
+    res.clearCookie("refresh_token", {
+      domain: process.env.COOKIE_DOMAIN,
+      path: "/",
+    });
+    res.clearCookie("access_token", {
+      domain: process.env.COOKIE_DOMAIN,
+      path: "/",
+    });
     return res.status(200).json({
       EM: "clear cookie success",
       EC: 0,

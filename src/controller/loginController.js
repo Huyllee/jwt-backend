@@ -32,10 +32,14 @@ const verifySSOToken = async (req, res) => {
       res.cookie("access_token", token, {
         maxAge: process.env.MAX_AGE_ACCESS_TOKEN,
         httpOnly: true,
+        domain: process.env.COOKIE_DOMAIN,
+        path: "/",
       });
       res.cookie("refresh_token", refreshToken, {
         maxAge: process.env.MAX_AGE_REFRESH_TOKEN,
         httpOnly: true,
+        domain: process.env.COOKIE_DOMAIN,
+        path: "/",
       });
 
       const resData = {

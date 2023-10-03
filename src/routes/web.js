@@ -17,7 +17,7 @@ const initWebRoutes = (app) => {
 
   router.get("/login", checkUser.isLogin, loginController.handleGetLoginPage);
 
-  app.post("/login", function (req, res, next) {
+  router.post("/login", function (req, res, next) {
     passport.authenticate("local", function (error, user, info) {
       if (error) {
         return res.status(500).json(error);
@@ -37,6 +37,19 @@ const initWebRoutes = (app) => {
 
   router.post("/logout", passportController.handleLogout);
   router.post("/verify-token", loginController.verifySSOToken);
+
+  router.get(
+    "/auth/google",
+    passport.authenticate("google", { scope: ["email", "profile"] })
+  );
+
+  router.get(
+    "/google/redirect",
+    passport.authenticate("google", {
+      successRedirect: "/",
+      failureRedirect: "/login",
+    })
+  );
 
   return app.use("/", router);
 };

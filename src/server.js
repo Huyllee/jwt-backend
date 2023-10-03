@@ -8,6 +8,7 @@ import cookieParser from "cookie-parser";
 import flash from "connect-flash";
 import { configPassport } from "./controller/passportController";
 import configSession from "./config/session";
+import configLoginWithGoogle from "./controller/socials/googleController";
 
 require("dotenv").config();
 
@@ -34,6 +35,7 @@ app.use((req, res) => {
 });
 
 configPassport();
+configLoginWithGoogle();
 
 app.listen(PORT, () => {
   console.log(`server is running on port: ${PORT}`);

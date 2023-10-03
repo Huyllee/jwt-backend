@@ -151,6 +151,32 @@ const updateUserRefreshToken = async (email, token) => {
   }
 };
 
+const upsertUserSocialMedia = async (type, dataRaw) => {
+  try {
+    let user = null;
+    if (type === "GOOGLE") {
+      user = await db.User.findOne({
+        where: { email: dataRaw.email, type: type },
+      });
+      if (!user) {
+        user = await db.User.create({
+          email: dataRaw.email,
+          userName: dataRaw.userName,
+          type,
+        });
+      }
+    }
+    return user;
+  } catch (err) {
+    console.log(err);
+    return {
+      EM: "Error from service...",
+      EC: -1,
+      DT: "",
+    };
+  }
+};
+
 module.exports = {
   registerNewUser,
   loginUser,
@@ -159,4 +185,5 @@ module.exports = {
   checkPhone,
   checkPassword,
   updateUserRefreshToken,
+  upsertUserSocialMedia,
 };

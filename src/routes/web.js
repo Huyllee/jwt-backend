@@ -46,9 +46,11 @@ const initWebRoutes = (app) => {
   router.get(
     "/google/redirect",
     passport.authenticate("google", {
-      successRedirect: "/",
       failureRedirect: "/login",
-    })
+    }),
+    (req, res) => {
+      return res.render("social.ejs", { ssoToken: req.user.code });
+    }
   );
 
   return app.use("/", router);

@@ -53,6 +53,12 @@
           },
         });
       });
+
+      $("#iconGoogle").on("click", function () {
+        localStorage.removeItem("clientURL");
+        localStorage.setItem("clientURL", $("#redirectURL").val());
+        window.location.href = "/auth/google";
+      });
     });
   </script>
   <body>
@@ -103,8 +109,8 @@
                 <span>Login with:</span>
               </div>
               <div class="social text-center">
-                <a href="/auth/google"><i class="bi bi-google p-1"></i></a>
-                <a><i class="bi bi-facebook p-1"></i></a>
+                <i id="iconGoogle" class="bi bi-google p-1"></i>
+                <i id="iconFacebook" class="bi bi-facebook p-1"></i>
               </div>
             </div>
           </fieldset>

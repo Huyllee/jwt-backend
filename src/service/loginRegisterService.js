@@ -157,6 +157,7 @@ const upsertUserSocialMedia = async (type, dataRaw) => {
     if (type === "GOOGLE") {
       user = await db.User.findOne({
         where: { email: dataRaw.email, type: type },
+        raw: true,
       });
       if (!user) {
         user = await db.User.create({

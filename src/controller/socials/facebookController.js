@@ -3,19 +3,20 @@ import passport from "passport";
 import loginRegisterService from "../../service/loginRegisterService";
 import { v4 as uuidv4 } from "uuid";
 
-const GoogleStrategy = require("passport-google-oauth20").Strategy;
+const FacebookStrategy = require("passport-facebook").Strategy;
 
-const configLoginWithGoogle = () => {
+const configLoginWithFacebook = () => {
   passport.use(
-    new GoogleStrategy(
+    new FacebookStrategy(
       {
-        clientID: process.env.GOOGLE_APP_CLIENT_ID,
-        clientSecret: process.env.GOOGLE_APP_CLIENT_SECRET,
-        callbackURL: process.env.GOOGLE_APP_REDIRECT_LOGIN,
-        passReqToCallback: true,
+        clientID: process.env.FACEBOOK_APP_ID,
+        clientSecret: process.env.FACEBOOK_APP_SECRET,
+        callbackURL: process.env.FACEBOOK_APP_REDIRECT_LOGIN,
+
+        profileFields: ["id", "emails", "name", "displayName"],
       },
-      async function (request, accessToken, refreshToken, profile, done) {
-        const type = "GOOGLE";
+      async function (accessToken, refreshToken, profile, cb) {
+        const type = "FACEBOOK";
         let dataRaw = {
           userName: profile.displayName,
           email:
@@ -28,10 +29,10 @@ const configLoginWithGoogle = () => {
           dataRaw
         );
         user.code = uuidv4();
-        return done(null, user);
+        return cb(null, user);
       }
     )
   );
 };
 
-export default configLoginWithGoogle;
+export default configLoginWithFacebook;

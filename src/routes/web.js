@@ -53,6 +53,19 @@ const initWebRoutes = (app) => {
     }
   );
 
+  router.get(
+    "/auth/facebook",
+    passport.authorize("facebook", { scope: ["public_profile"] })
+  );
+
+  router.get(
+    "/facebook/redirect",
+    passport.authenticate("facebook", { failureRedirect: "/login" }),
+    function (req, res) {
+      return res.render("social.ejs", { ssoToken: req.user.code });
+    }
+  );
+
   return app.use("/", router);
 };
 

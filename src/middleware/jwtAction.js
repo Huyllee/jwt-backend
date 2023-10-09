@@ -1,7 +1,13 @@
 import jwt from "jsonwebtoken";
 require("dotenv").config();
 
-const nonSecurePaths = ["/", "/register", "/login", "/logout"];
+const nonSecurePaths = [
+  "/",
+  "/register",
+  "/login",
+  "/logout",
+  "/verify-service-jwt",
+];
 
 const createJWT = (payload) => {
   let key = process.env.JWT_SECRET;
@@ -31,7 +37,7 @@ const extractToken = (req) => {
     req.headers.authorization &&
     req.headers.authorization.split(" ")[0] === "Bearer"
   ) {
-    return req.headers.authorization.split[1];
+    return req.headers.authorization.split(" ")[1];
   }
   return null;
 };
@@ -105,9 +111,38 @@ const checkUserPermission = (req, res, next) => {
   }
 };
 
+const checkServiceJWT = (req, res, next) => {
+  let tokenFromHeader = extractToken(req);
+
+  if (tokenFromHeader) {
+    let access_token = tokenFromHeader;
+    let decoded = verifyToken(access_token);
+    if (decoded) {
+      return res.status(200).json({
+        EC: 0,
+        EM: "Verify the user",
+        DT: "",
+      });
+    } else {
+      return res.status(401).json({
+        EC: -1,
+        EM: "Not authenticated the user",
+        DT: "",
+      });
+    }
+  } else {
+    return res.status(401).json({
+      EC: -1,
+      EM: "Not authenticated the user",
+      DT: "",
+    });
+  }
+};
+
 module.exports = {
   createJWT,
   verifyToken,
   checkUserJWT,
   checkUserPermission,
+  checkServiceJWT,
 };

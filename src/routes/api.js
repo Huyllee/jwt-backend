@@ -3,12 +3,18 @@ import apiController from "../controller/apiController";
 import userController from "../controller/userController";
 import groupController from "../controller/groupController";
 import roleController from "../controller/roleController";
-import { checkUserJWT, checkUserPermission } from "../middleware/jwtAction";
+import {
+  checkUserJWT,
+  checkUserPermission,
+  checkServiceJWT,
+} from "../middleware/jwtAction";
 
 const router = express.Router();
 
 const ApiRoutes = (app) => {
   router.all("*", checkUserJWT, checkUserPermission);
+
+  router.post("/verify-service-jwt", checkServiceJWT);
 
   router.post("/register", apiController.handleRegister);
   router.post("/login", apiController.handleLogin);

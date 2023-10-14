@@ -1,4 +1,5 @@
 import { v4 as uuidv4 } from "uuid";
+import nodemailer from "nodemailer";
 import loginRegisterService from "../service/loginRegisterService";
 import { createJWT } from "../middleware/jwtAction";
 require("dotenv").config();
@@ -76,7 +77,49 @@ const verifySSOToken = async (req, res) => {
   }
 };
 
+const handleResetPassword = (req, res) => {
+  return res.render("forgot-password.ejs");
+};
+
+const sendCode = async (req, res) => {
+  const transporter = nodemailer.createTransport({
+    host: "smtp.gmail.com",
+    port: 587,
+    secure: false,
+    auth: {
+      // TODO: replace `user` and `pass` values from <https://forwardemail.net>
+      user: process.env.GOOGLE_APP_EMAIL,
+      pass: process.env.GOOGLE_APP_PASSWORD,
+    },
+  });
+
+  const OTP = Math.floor(100000 + Math.random() * 900000);
+
+  try {
+    // send mail with defined transport object
+    await transporter.sendMail({
+      from: "SSO Backend 👻", // sender address
+      to: `${req.body.email}`, // list of receivers
+      subject: "Reset Password ✔", // Subject line
+      html: `<b>Bạn nhận được email này, do yêu cầu reset mât khẩu</b>
+        <div>Your OTP: ${OTP}</div>`, // html body
+    });
+    //update code in database
+    await loginRegisterService.updateUserCode(OTP, req.body.email);
+  } catch (e) {
+    console.log(e);
+  }
+
+  return res.status(200).json({
+    EM: "Success",
+    EC: 0,
+    DT: { email: req.body.email },
+  });
+};
+
 module.exports = {
   handleGetLoginPage,
   verifySSOToken,
+  handleResetPassword,
+  sendCode,
 };

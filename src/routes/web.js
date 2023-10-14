@@ -66,6 +66,9 @@ const initWebRoutes = (app) => {
     }
   );
 
+  router.get("/forgot-password", loginController.handleResetPassword);
+  router.post("/send-code", loginController.sendCode);
+
   return app.use("/", router);
 };
 

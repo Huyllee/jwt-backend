@@ -1,4 +1,6 @@
 import jwt from "jsonwebtoken";
+import { v4 as uuidv4 } from "uuid";
+import loginRegisterService from "../service/loginRegisterService";
 require("dotenv").config();
 
 const nonSecurePaths = [
@@ -27,7 +29,10 @@ const verifyToken = (token) => {
   try {
     decoded = jwt.verify(token, key);
   } catch (err) {
-    console.log(err);
+    if (err instanceof jwt.TokenExpiredError) {
+      return "TokenExpiredError";
+    }
+    // console.log(err);
   }
   return decoded;
 };
@@ -42,7 +47,7 @@ const extractToken = (req) => {
   return null;
 };
 
-const checkUserJWT = (req, res, next) => {
+const checkUserJWT = async (req, res, next) => {
   if (nonSecurePaths.includes(req.path)) return next();
 
   let cookies = req.cookies;
@@ -52,13 +57,47 @@ const checkUserJWT = (req, res, next) => {
     let access_token =
       cookies && cookies.access_token ? cookies.access_token : tokenFromHeader;
     let decoded = verifyToken(access_token);
-    if (decoded) {
+    if (decoded && decoded !== "TokenExpiredError") {
       decoded.access_token = access_token;
       decoded.refresh_token = cookies.refresh_token;
       req.user = decoded;
-      // req.access_token = access_token;
 
       next();
+    } else if (decoded && decoded === "TokenExpiredError") {
+      //handle refresh token
+      if (cookies && cookies.refresh_token) {
+        let data = await handleRefreshToken(cookies.refresh_token);
+        let newAccessToken = data.newAccessToken;
+        let newRefreshToken = data.newRefreshToken;
+
+        //set cookies
+        if (newAccessToken && newRefreshToken) {
+          res.cookie("access_token", newAccessToken, {
+            maxAge: 900 * 1000,
+            httpOnly: true,
+            domain: process.env.COOKIE_DOMAIN,
+            path: "/",
+          });
+          res.cookie("refresh_token", newRefreshToken, {
+            maxAge: 3600 * 1000,
+            httpOnly: true,
+            domain: process.env.COOKIE_DOMAIN,
+            path: "/",
+          });
+        }
+
+        return res.status(405).json({
+          EC: -1,
+          EM: "Need to retry with new token",
+          DT: "",
+        });
+      } else {
+        return res.status(401).json({
+          EC: -1,
+          EM: "Not authenticated the user",
+          DT: "",
+        });
+      }
     } else {
       return res.status(401).json({
         EC: -1,
@@ -137,6 +176,32 @@ const checkServiceJWT = (req, res, next) => {
       DT: "",
     });
   }
+};
+
+const handleRefreshToken = async (refreshToken) => {
+  let newAccessToken = "",
+    newRefreshToken = "";
+  //update refreshToken
+  let user = await loginRegisterService.getUserByRefreshToken(refreshToken);
+  if (user) {
+    //create access token
+    let payloadAccessToken = {
+      email: user.email,
+      userName: user.userName,
+      groupWithRole: user.groupWithRole,
+    };
+    newAccessToken = createJWT(payloadAccessToken);
+    newRefreshToken = uuidv4();
+    //update user with new refreshToken
+    await loginRegisterService.updateUserRefreshToken(
+      user.email,
+      newRefreshToken
+    );
+  }
+  return {
+    newAccessToken,
+    newRefreshToken,
+  };
 };
 
 module.exports = {

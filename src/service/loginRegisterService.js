@@ -139,7 +139,7 @@ const updateUserRefreshToken = async (email, token) => {
       {
         refreshToken: token,
       },
-      { where: { email: email } }
+      { where: { email: email.trim() } }
     );
   } catch (err) {
     console.log(err);
@@ -176,6 +176,46 @@ const upsertUserSocialMedia = async (type, dataRaw) => {
   }
 };
 
+const getUserByRefreshToken = async (token) => {
+  try {
+    let user = await db.User.findOne({
+      where: {
+        refreshToken: token,
+      },
+    });
+
+    if (user) {
+      let groupWithRole = await getGroupWithRoles(user);
+      return {
+        email: user.email,
+        userName: user.userName,
+        groupWithRole: groupWithRole,
+      };
+    }
+    return null;
+  } catch (e) {
+    console.log(e);
+  }
+};
+
+const updateUserCode = async (code, email) => {
+  try {
+    await db.User.update(
+      {
+        code: code,
+      },
+      { where: { email: email.trim() } }
+    );
+  } catch (err) {
+    console.log(err);
+    return {
+      EM: "Error from service...",
+      EC: -2,
+      DT: "",
+    };
+  }
+};
+
 module.exports = {
   registerNewUser,
   loginUser,
@@ -185,4 +225,6 @@ module.exports = {
   checkPassword,
   updateUserRefreshToken,
   upsertUserSocialMedia,
+  getUserByRefreshToken,
+  updateUserCode,
 };

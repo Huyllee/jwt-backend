@@ -83,6 +83,7 @@ const loginUser = async (dataUser) => {
           { email: dataUser.valueLogin },
           { phone: dataUser.valueLogin },
         ],
+        type: "LOCAL",
       },
       raw: true,
     });
@@ -204,7 +205,7 @@ const updateUserCode = async (code, email) => {
       {
         code: code,
       },
-      { where: { email: email.trim() } }
+      { where: { email: email.trim(), type: "LOCAL" } }
     );
   } catch (err) {
     console.log(err);
@@ -213,6 +214,40 @@ const updateUserCode = async (code, email) => {
       EC: -2,
       DT: "",
     };
+  }
+};
+
+const isEmailLocal = async (email) => {
+  try {
+    let user = await db.User.findOne({
+      where: { email: email, type: "LOCAL" },
+    });
+    if (user) {
+      return true;
+    } else {
+      return false;
+    }
+  } catch (e) {
+    return false;
+  }
+};
+
+const resetUserPassword = async (rawData) => {
+  try {
+    let newPassword = hashPassword(rawData.newPassword);
+    let count = await db.User.update(
+      { password: newPassword },
+      {
+        where: { email: rawData.email, type: "LOCAL", code: rawData.code },
+      }
+    );
+    if (count && count[0] > 0) {
+      return true;
+    }
+    return false;
+  } catch (e) {
+    console.log(e);
+    return false;
   }
 };
 
@@ -227,4 +262,6 @@ module.exports = {
   upsertUserSocialMedia,
   getUserByRefreshToken,
   updateUserCode,
+  isEmailLocal,
+  resetUserPassword,
 };

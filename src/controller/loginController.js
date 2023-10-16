@@ -1,5 +1,8 @@
 import { v4 as uuidv4 } from "uuid";
 import nodemailer from "nodemailer";
+import * as handlebars from "handlebars";
+import * as fs from "fs";
+import * as path from "path";
 import loginRegisterService from "../service/loginRegisterService";
 import { createJWT } from "../middleware/jwtAction";
 require("dotenv").config();
@@ -82,6 +85,27 @@ const handleResetPassword = (req, res) => {
 };
 
 const sendCode = async (req, res) => {
+  //validate email, check type account equal local
+  let checkEmailLocal = await loginRegisterService.isEmailLocal(req.body.email);
+  if (!checkEmailLocal) {
+    return res.status(401).json({
+      DT: "",
+      EM: "Not found user",
+      EC: -1,
+    });
+  }
+  //send code via email
+  const OTP = Math.floor(100000 + Math.random() * 900000);
+  const __dirname = path.resolve();
+  const filePath = path.join(__dirname, "./src/templates/reset-password.html");
+  const source = fs.readFileSync(filePath, "utf-8").toString();
+  const template = handlebars.compile(source);
+  const replacements = {
+    email: req.body.email,
+    otp: OTP,
+  };
+  const htmlToSend = template(replacements);
+
   const transporter = nodemailer.createTransport({
     host: "smtp.gmail.com",
     port: 587,
@@ -93,28 +117,50 @@ const sendCode = async (req, res) => {
     },
   });
 
-  const OTP = Math.floor(100000 + Math.random() * 900000);
+  res.status(200).json({
+    EM: "Success",
+    EC: 0,
+    DT: { email: req.body.email },
+  });
 
   try {
     // send mail with defined transport object
     await transporter.sendMail({
-      from: "SSO Backend 👻", // sender address
+      from: `SSO Backend 👻 <${process.env.GOOGLE_APP_EMAIL}>`, // sender address
       to: `${req.body.email}`, // list of receivers
       subject: "Reset Password ✔", // Subject line
-      html: `<b>Bạn nhận được email này, do yêu cầu reset mât khẩu</b>
-        <div>Your OTP: ${OTP}</div>`, // html body
+      html: htmlToSend, // html body
     });
     //update code in database
     await loginRegisterService.updateUserCode(OTP, req.body.email);
   } catch (e) {
     console.log(e);
   }
+};
 
-  return res.status(200).json({
-    EM: "Success",
-    EC: 0,
-    DT: { email: req.body.email },
-  });
+const submitResetPassword = async (req, res) => {
+  try {
+    let result = await loginRegisterService.resetUserPassword(req.body);
+    if (result === true) {
+      res.status(200).json({
+        EM: "Success",
+        EC: 0,
+        DT: "",
+      });
+    } else {
+      res.status(500).json({
+        EC: -1,
+        EM: "Reset password error...",
+        DT: "",
+      });
+    }
+  } catch (e) {
+    res.status(500).json({
+      EC: -2,
+      EM: "Internal error",
+      DT: "",
+    });
+  }
 };
 
 module.exports = {
@@ -122,4 +168,5 @@ module.exports = {
   verifySSOToken,
   handleResetPassword,
   sendCode,
+  submitResetPassword,
 };
